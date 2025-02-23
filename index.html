@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motivation Jar</title>
+    <style>
+        /* Simple style for the jar and popup */
+        .jar {
+            margin: 10px;
+            padding: 20px;
+            background-color: #f2f2f2;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .popup-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .delete {
+            background-color: red;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .delete:hover {
+            background-color: darkred;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Jar buttons -->
+    <div class="jar quit" onclick="showLetter('quit')">When You Wanna Quit 🛑</div>
+    <div class="jar happy" onclick="showLetter('happy')">When You Feel Happy 🎉</div>
+    <div class="jar cheer-up" onclick="showLetter('cheer-up')">When You Wanna Cheer Up 💪</div>
+    <div class="jar too-much" onclick="showLetter('too-much')">When It Gets Too Much 💪</div>
+    <div class="jar argument" onclick="showLetter('argument')">When We Have an Argument 😰</div>
+    <div class="jar not-well" onclick="showLetter('not-well')">When You're Not Well 🤍</div>
+    <div class="jar not-there" onclick="showLetter('not-there')">When I'm Not There ❤</div>
+    <div class="jar exams" onclick="showLetter('exams')">Before Your Exams 😡</div>
+    <div class="jar beautiful" onclick="showLetter('beautiful')">When You Feel Beautiful 🎉</div>
+    <div class="jar crying" onclick="showLetter('crying')">When You Feel Like Crying 😭</div>
+
+    <!-- Popup container -->
+    <div id="popupBg" class="popup-bg" onclick="closePopup()">
+        <div class="popup-content" onclick="event.stopPropagation()">
+            <div id="letterContent"></div>
+        </div>
+    </div>
+
+    <!-- Mood Letter saving section -->
+    <div class="jar">
+        <select id="moodSelect">
+            <option value="happy">When You Feel Happy 🎉</option>
+            <option value="cheer-up">When You Wanna Cheer Up 💪</option>
+            <option value="too-much">When It Gets Too Much 💪</option>
+            <option value="argument">When We Have an Argument 😰</option>
+            <option value="not-well">When You're Not Well 🤍</option>
+            <option value="not-there">When I'm Not There ❤</option>
+            <option value="exams">Before Your Exams 😡</option>
+            <option value="beautiful">When You Feel Beautiful 🎉</option>
+            <option value="crying">When You Feel Like Crying 😭</option>
+            <option value="quit">When You Wanna Quit 🛑</option>
+        </select>
+        <textarea id="newLetter" placeholder="Write your letter here..."></textarea>
+        <button onclick="saveLetter()">Save Letter</button>
+    </div>
+
+    <script>
+        let letters = JSON.parse(localStorage.getItem("letters")) || {};
+
+        // Predefined letters
+        letters['happy'] = "I think you're really pretty, If pretty were the sky, You'd be a beautiful sunset from a cliff, If pretty were a piece of art, Then I'd put u beside a masterpiece and wouldn't be able to tell you apart, If pretty were a festival, You'd be the prettiest sky full of lanterns on a diwali night, But most of all I think you're really pretty, Cause if it were easy to see, It'd be you being the best you with that beautiful smile of yours.";
+        letters['cheer-up'] = "We'll ik it can be hard at times but there's smth I wanted to give you. Haan Obv it is virtual only😂. I wanted to give you a gold medal for being the hardworking person you are 🙂‍↕, a gold medal for being the best sister in the world ❤, a gold for being the best daughter 🫶🏼, a gold medal for being the amazing person who cares for everyone around 🥰, a gold medal for being the best friend one could have🫶🏼 and most of all a gold medal for being my gadhedooo 😂😘";
+        letters['too-much'] = "Keep your head up princess 'fore your crown falls, Know these voices in your head will be your downfall I know it gets so hard but you don't got far to go, Yeah, keep your head up princess, it's a long road, And the path leads right to where they won't go I know it hurts right now but I know you'll make it home, So keep your head up Yeah, keep your head up.";
+        letters['argument'] = "Well ig I fucked up, hu me thoda chutiya sa but hu to aapka hi bestfriend naaaa😏🥰, idk abhi shayad we're not talking theek se but just knoww that I loveeee youuuuu jaise bhi hoooo🫶🏼 tu hai meri gadhedooo aur rahegiiiii😂😂 mere saamne nahi but chal ye letter dekh ke hi badiiii si smile karleeee....wait....clicks......Kinniii sonhiii laagriii haiii meri kudiiii🧿😂";
+        letters['not-well'] = "Heyy I'm sending you love, You can hold on to it every time you feel weak, Or if it gets too cold you can wrap yourself with it, Let it keep you safe and warm, When you're listening to a song or reading a book, Let it rest inside your heart, Let it guide you and show you light when you're lost and things are getting dark, When you're feeling empty, Let it fill you up, If you feel burnt out, Let it tap on your shoulder and remind you how strong you are, Let it get tangled up in silly conversations, When you're lonely and hurting, Let it wipe your tears away, Let it kiss you on your head when you're not feeling at your best, In your silence, Let it make some noise, I'm sending you love, Use it whenever you need, Cause I'll be here whenever you sink deep.";
+        letters['not-there'] = "Hey, Wassupp I wrote this up so you could read it again whenever you feel down, I know life can suck sometimes, Lot of stuff to worry about, Lot of battles you fight in your head that no one knows, Just know one thing, Even if the whole world was against, You've got people you can lean on, People who won't leave you in your darkest times, People who think you look the cutest when you cry😂, People who no matter how many times you wanna feel like giving up will get you up, And they are proud of you, You're doing your best, And we are togather in this, Isiliye cheer up bishhh🥳 You've got all of this...sherni hai tu sherniiii.....rawwrrrrr😂🥰🦁";
+        letters['exams'] = "Ik it is stressful...managing everything but you're doing greatttttt🥳 Tu kar legiiii meri shreniiiiii🦁😘 You've got thisssss🤜🏼";
+        letters['beautiful'] = "Mountains are beautiful, But you can't always be there, The sun is beautiful, But eventually it sets, Even the stars are beautiful, But they're not always there, But you know what is, That cute little smile, I get to see daily.";
+        letters['crying'] = "Heyy,\nIs this my cutuuu gadhedo?? Kyaa haal hai madam keeeee??? It's alrightttt, you can cryyy....let it all out cause no one can keep it all in forever and given how brave and strong you are, you deserve it🥰. And ik after sometime you're gonna be back so it's okayyy to be down for sometime. I'm proud of youuuuuu my girl and you deserve everything and that means a little space as well❤\nI love youu ❤❤";
+        letters['quit'] = "Hey cutoo, Badiii si jhappiiiii for youuuu🥰🫂 Just wanted you to know that I'm super proud of you🥹 Proud of you for working so hard, Proud of you for going through so many ups and downs and still keeping that smile intact, Proud of you for not giving up no matter what happens, But most of all, I'm proud of you for being the beautiful person you are✨ I love youu more than ukkk🫶🏼 Just keep goinggg, TU KARLEGI YAAR<3";
+
+        // Show the letter in the popup
+        function showLetter(mood) {
+            const letterContent = document.getElementById("letterContent");
+            letterContent.innerHTML = letters[mood] ? `${letters[mood]}<br><button class="delete" onclick="deleteLetter('${mood}')">Delete</button>` : "No letter saved for this mood yet.";
+            document.getElementById("popupBg").style.display = "flex";
+        }
+
+        // Close the popup
+        function closePopup() { document.getElementById("popupBg").style.display = "none"; }
+
+        // Save the new letter
+        function saveLetter() { 
+            const mood = document.getElementById("moodSelect").value;
+            const newLetter = document.getElementById("newLetter").value.trim();
+            if (newLetter) { letters[mood] = newLetter; localStorage.setItem("letters", JSON.stringify(letters)); alert("Letter saved!"); } 
+        }
+
+        // Delete a saved letter
+        function deleteLetter(mood) { 
+            if(confirm("Delete this letter?")) { 
+                delete letters[mood]; 
+                localStorage.setItem("letters", JSON.stringify(letters)); 
+                closePopup(); 
+            } 
+        }
+    </script>
+
+</body>
+</html>
